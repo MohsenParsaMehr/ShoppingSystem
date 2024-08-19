@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form asp-controller="Login" asp-action="" asp-route-returnurl="@TempData["ReturnUrl"]" method="post">
+    <table style="border:none">
+        <tr>
+            <td>
+                Username: 
+            </td>
+            <td>
+                <input type="text" class="form-control" id="username" name="username" required placeholder="Enter Username">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Password:
+            </td>
+            <td>
+                <input type="password" class="form-control" id="password" name="password" required placeholder="Enter Password">
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+                <button type="submit" class="btn btn-primary" style="float:right;" asp-action="Authenticate">ورود</button>
+                <button type="submit" class="btn btn-primary" style="float:right;" asp-action="Signup" >ثبت نام کاربر جدید</button>
+            </td>
+        </tr>
+
+    </table>
+</form>
+

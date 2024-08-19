@@ -1,0 +1,117 @@
+﻿@model GalleryViewModel
+
+@section Scripts
+{
+    <script src="~/js/gallery.js"></script>
+    <script src="~/js/rating.js"></script>
+}
+
+@{
+    ViewData["Title"] = "فروشگاه اینترنتی کفش";
+    int group = 1;
+}
+
+<style>
+    .celldiv {
+        position: relative;
+        border-radius:15px;
+        border-color:gray;
+    }
+
+    .urdiv {
+        top: 5px;
+        right: 5px;
+        position: absolute;
+    }
+
+    .bdiv {
+        bottom: 5px;
+        position: absolute;
+    }
+
+    .productbtn {
+        background-color: white;
+    }
+</style>
+
+<div style="text-align:center; direction:rtl">
+    <form class="inlinef" action="/Gallery/Index" method="get">
+        <input type="number" name="page" value="1" hidden />
+            <button style="font-size:20px; float:right; border-radius:9px;" type="submit">بگرد</button>
+        <input style="font-size:20px;border-radius:10px;color:gray;" size="35" type="text"  id="searchbar" name="search" value="@ViewData["Searchbar"]" placeholder="جستجو در فروشگاه" />
+    
+    </form>
+</div>
+    
+<table class="gallery" style="border-spacing: 20px 20px; border-collapse: separate; table-layout: fixed;" border="0">
+    @for (int i = 0; i < Model.DisplayedProducts.Count; i += Model.Columns)
+    {
+        <tr>
+            @for (int j = i; j < i + Model.Columns && j < Model.DisplayedProducts.Count; ++j)
+            {
+                string url = Model.DisplayedProducts[j].ImageLink.StartsWith("~") ? Model.DisplayedProducts[j].ImageLink.Substring(1) : Model.DisplayedProducts[j].ImageLink;
+
+                <td class="galleryTtd celldiv" style="border: 1px solid gray; width: 33%;">     
+                    <div id=@("urdiv" + Model.DisplayedProducts[j].Id) class="urdiv" data-product="@Model.DisplayedProducts[j].Id" data-average="@Model.AverageRating(Model.DisplayedProducts[j].Id)" data-rated="@Model.UserRating(Model.DisplayedProducts[j].Id)">
+                        <span id="@("rating" + Model.DisplayedProducts[j].Id)">میانگین امتیاز</span>
+                        <img class="@("stars" + group.ToString())" style="cursor: pointer;" name="star1" src="~/images/blank_star.png" width="20" />
+                        <img class="@("stars" + group.ToString())" style="cursor: pointer;" name="star2" src="~/images/blank_star.png" width="20" />
+                        <img class="@("stars" + group.ToString())" style="cursor: pointer;" name="star3" src="~/images/blank_star.png" width="20" />
+                        <img class="@("stars" + group.ToString())" style="cursor: pointer;" name="star4" src="~/images/blank_star.png" width="20" />
+                        <img class="@("stars" + group.ToString())" style="cursor: pointer;" name="star5" src="~/images/blank_star.png" width="20" />
+                    </div>
+                    <br /><br />
+                    <img src="@url" width="320" />
+                    <h2>@Model.DisplayedProducts[j].Name</h2>
+                    <p>@Model.DisplayedProducts[j].Description</p>
+                    <br /><br />
+                    <div class="bdiv w-100">
+                        <button style="background-color:lightcyan;color:black;" class="productbtn btn btn-primary" type="button" productId="@Model.DisplayedProducts[j].Id">تومان @Model.DisplayedProducts[j].Price - افزودن به سبد خرید</button>
+                    </div>
+                </td>
+                group++;
+            }
+            @if (group < 4)
+            {
+                @for (int k = 0; k < 4 - group; k++)
+                {
+                    <td class="celldiv" style="width: 33%;"></td>
+                }
+            }
+        </tr>
+    }
+</table>
+
+@if (Model.TotalPage > 1)
+{
+    <div align="center">
+        @if (Model.Page != 1)
+        {
+            <form class="inlinef" action="/Gallery/Index" method="get">
+                <input type="text" name="search" value="@ViewData["Searchbar"]" hidden />
+                <button type="submit" name="page" value="@(Model.Page - 1)" style="border:none">&lt&lt</button>
+            </form>
+        }
+        @for (int i = 1; i <= Model.TotalPage; ++i)
+        {
+            if (i == Model.Page)
+            {
+                <button class="activePage">@i</button>
+            }
+            else
+            {
+                <form class="inlinef" action="/Gallery/Index" method="get">
+                    <input type="text" name="search" value="@ViewData["Searchbar"]" hidden />
+                    <button type="submit" class="nonactivePage" name="page" value="@i" style="border:none">@i</button>
+                </form>
+            }
+        }
+        @if (Model.Page < Model.TotalPage)
+        {
+            <form class="inlinef" action="/Gallery/Index" method="get">
+                <input type="text" name="search" value="@ViewData["Searchbar"]" hidden />
+                <button type="submit" name="page" value="@(Model.Page + 1)" style="border:none">&gt&gt</button>
+            </form>
+        }
+    </div>
+}
