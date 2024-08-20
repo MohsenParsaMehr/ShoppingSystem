@@ -25,7 +25,7 @@ namespace SA51_CA_Project_Team10
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.AddControllersWithViews();
 
             services.AddDbContext<DbT10Software>(opt =>
@@ -48,7 +48,7 @@ namespace SA51_CA_Project_Team10
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-            }
+            }            
             app.UseStaticFiles();
 
             app.UseRouting();

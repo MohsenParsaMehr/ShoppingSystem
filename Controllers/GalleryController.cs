@@ -8,6 +8,7 @@ using Castle.Core.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using SA51_CA_Project_Team10.DBs;
 using SA51_CA_Project_Team10.Models;
 
@@ -17,10 +18,11 @@ namespace SA51_CA_Project_Team10.Controllers
     {
         private readonly DbT10Software _db;
         private readonly Verify _v;
-
-        public GalleryController(DbT10Software db, Verify v) {
+        private readonly ILogger<GalleryViewModel> _logger;
+        public GalleryController(DbT10Software db, Verify v, ILogger<GalleryViewModel> logger) {
             _db = db;
             _v = v;
+            _logger = logger;
         }
         public IActionResult Index(string search, int page = 1)
         {
@@ -30,8 +32,17 @@ namespace SA51_CA_Project_Team10.Controllers
             if (_v.VerifySession(sessionId, _db))
             {
                 ViewData["Logged"] = true;
-                user = _db.Sessions.FirstOrDefault(x => x.Id == sessionId).User;
-
+                try
+                {
+                    user = _db.Sessions.FirstOrDefault(x => x.Id == sessionId).User;
+                    throw new Exception();
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    _logger.LogDebug(ex.Message);
+                    _logger.Log(LogLevel.Critical, ex.Message);
+                }
                 ViewData["Username"] = user.Username;
 
                 //retrieve product number labeled beside icon
